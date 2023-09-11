@@ -126,6 +126,19 @@ class onnxModifier:
                     self.graph.node.remove(self.node_name2module[node_name])
                 self.node_name2module.pop(node_name, None)
 
+            # if node is convlution, remove reshape input
+
+            #if node is convolution, remove reshape output named W
+            if "BatchNormalization" in node_name:
+                #if output name is running_mean or running_var, remove it
+                for output in self.node_name2module[node_name].output:
+                    if "output_1" in output:
+                        self.node_name2module[node_name].output.remove(output)
+                
+                for output in self.node_name2module[node_name].output:
+                    if "output_2" in output:
+                        self.node_name2module[node_name].output.remove(output)
+
         remained_inputs = []
         for remained_node in self.graph.node:
             remained_inputs += remained_node.input
